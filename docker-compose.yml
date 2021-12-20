@@ -1,0 +1,37 @@
+version: "3.9"
+services: 
+  dbpostgres:
+    image: postgres:latest
+    container_name: meuguru_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: meuguru
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "12345"
+    volumes:
+      - postgres_data:/var/lib/postgres
+    networks:
+      - meuguru-network
+  api:
+    build:
+      context: .
+    restart: always
+    container_name: meuguru-api
+    volumes: 
+      - ./src
+      - ./src/node_modules
+    ports:
+      - 3000:3000
+    expose:
+      - "3000"
+    networks:
+      - meuguru-network
+    depends_on:
+      - dbpostgres
+
+volumes:
+  postgres_data:
+networks:
+  meuguru-network:
